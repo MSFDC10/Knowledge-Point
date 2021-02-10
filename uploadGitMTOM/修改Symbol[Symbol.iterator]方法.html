@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>修改Symbol[Symbol.iterator]方法</title>
+</head>
+<body>
+<div class="div_1"></div>
+<div class="div_2"></div>
+<div class="div_3"></div>
+<div class="div_4"></div>
+<div class="div_5"></div>
+
+<script>
+    const aDiv = document.getElementsByTagName("div");
+
+    for (let i of aDiv) {
+        console.log(i);
+    }
+
+    Object.assign(HTMLCollection.prototype, {
+        dataValue() {
+            // return Object.values(this);
+            return Object.keys(this);
+        },
+        [Symbol.iterator]() {
+            let _self = this.dataValue();
+            let index = 0;
+            return {
+                next() {
+                    if (index < _self.length) {
+                        return {
+                            value: `${_self[index++]} -- shz`,
+                            done: false
+                        }
+                    } else {
+                        return {
+                            value: `undefined -- shz`,
+                            done: true
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    for (let i of aDiv) {
+        console.log(i);
+    }
+</script>
+</body>
+</html>

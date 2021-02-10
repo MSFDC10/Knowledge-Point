@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>y = x ^ 2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        canvas {
+            display: block;
+            background-color: black;
+        }
+    </style>
+</head>
+<body>
+<canvas id="canvas-wrapper" width="500" height="500"></canvas>
+
+<script>
+    let canCon = document.querySelector("#canvas-wrapper"); // 获取canvas元素（得到一个国画卷轴）
+    let canCtx = canCon.getContext("2d"); // 获取canvas元素的渲染上下文（得到卷轴上可以画画的部分）
+
+    canCon.width = window.innerWidth;
+    canCon.height = window.innerHeight;
+
+    canCtx.strokeStyle = "red";
+    canCtx.beginPath();
+    canCtx.moveTo(0, 250);
+    canCtx.lineTo(500, 250);
+    canCtx.moveTo(250, 0);
+    canCtx.lineTo(250, 500);
+    canCtx.closePath();
+    canCtx.stroke();
+
+    let pointArr = [];
+
+    for (let x = 0; x <= 500; x++) {
+        pointArr.push([x, (x - 250) ** 2 / 250]);
+    }
+
+    canCtx.strokeStyle = "green";
+    canCtx.beginPath();
+
+    for (let i = 0, len = pointArr.length; i < len; i++) {
+        if (i) {
+            canCtx.lineTo(pointArr[i][0], pointArr[i][1]);
+        } else {
+            canCtx.moveTo(pointArr[i][0], pointArr[i][1]);
+        }
+    }
+
+    canCtx.stroke();
+</script>
+</body>
+</html>

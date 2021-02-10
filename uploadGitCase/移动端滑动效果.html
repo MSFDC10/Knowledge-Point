@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>移动端滑动效果</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        li {
+            list-style: none;
+        }
+
+        img {
+            display: block;
+        }
+
+        .container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .container > .swiper {
+            overflow: hidden;
+            width: 100%;
+            height: 60%;
+            transform: translateZ(0);
+        }
+
+        .container > .swiper > ul {
+            width: 600vw;
+            height: 100%;
+        }
+
+        .container > .swiper > ul > li {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            float: left;
+            width: 100vw;
+            height: 100%;
+        }
+
+        .container > .swiper > ul > li > img {
+            width: 80%;
+            height: 80%;
+        }
+
+        .container > .bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("https://imgsa.baidu.com/forum/w%3D580/sign=5e93c4073401213fcf334ed464e636f8/e622f2d3572c11df7a6f4ffd6e2762d0f503c2aa.jpg");
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            filter: blur(0.4vw);
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="bg"></div>
+    <div class="swiper">
+        <ul>
+            <li><img
+                    src="https://imgsa.baidu.com/forum/w%3D580/sign=5e93c4073401213fcf334ed464e636f8/e622f2d3572c11df7a6f4ffd6e2762d0f503c2aa.jpg"
+                    alt=""></li>
+            <li><img
+                    src="https://imgsa.baidu.com/forum/w%3D580/sign=1921c91a3cadcbef01347e0e9cae2e0e/6ddfb899a9014c08a785d87b077b020879f4f4aa.jpg"
+                    alt=""></li>
+            <li><img
+                    src="https://imgsa.baidu.com/forum/w%3D580/sign=8da903b21d3853438ccf8729a312b01f/34aaf8198618367a62378f0323738bd4b11ce5aa.jpg"
+                    alt=""></li>
+            <li><img
+                    src="https://imgsa.baidu.com/forum/w%3D580/sign=bb54692bb98f8c54e3d3c5270a282dee/c2d809f790529822660b9606daca7bcb0b46d432.jpg"
+                    alt=""></li>
+            <li><img
+                    src="https://imgsa.baidu.com/forum/w%3D580/sign=e96336a4fedeb48ffb69a1d6c01d3aef/a45f462309f790528cbbebfb01f3d7ca79cbd54e.jpg"
+                    alt=""></li>
+            <li><img
+                    src="https://imgsa.baidu.com/forum/w%3D580/sign=f81430823412b31bc76ccd21b61a3674/22e5a8d3fd1f41341c93a9bb281f95cad3c85e4e.jpg"
+                    alt=""></li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    /*
+    * 逻辑思维：
+    *   1：ul元素宽度设置随li元素数量变化自适应
+    *       1.1：获取ul元素和li元素
+    *       1.2：获取li元素个数，并计算ul元素宽度
+    *       1.3：设置ul元素宽度
+    *   2：实现图片滑动
+    *       2.1：获取触摸ul元素时，手指触摸的位置 x1
+    *       2.2：获取ul元素位置
+    *       2.3：获取触摸ul元素滑动时的位置 x2
+    *       2.4：计算ul元素的位置
+    *       2.5：设置ul元素的位置
+    *   3：边界回弹
+    *       3.1：设置ul元素两端超出回弹
+    *       3.2：设置li元素回弹
+    *   4：实现随着li元素变化背景随之变化
+    *       4.1：存储img元素src属性
+    *       4.2：调用
+    * */
+
+    const oSwiper = document.querySelector(".container > .swiper"),
+        oSwiperUl = oSwiper.querySelector("ul"),
+        aSwiperLi = oSwiperUl.querySelectorAll("li"),
+        oBg = document.querySelector(".container > .bg");
+
+    const liLength = aSwiperLi.length,
+        liWidth = aSwiperLi[0].offsetWidth,
+        imgSrcs = [];
+
+    oSwiperUl.style.width = liLength + "00vw";
+
+    aSwiperLi.forEach(item => {
+        imgSrcs.push(item.children[0].src);
+    });
+
+    oSwiper.addEventListener("touchstart", touch);
+    oSwiper.addEventListener("touchmove", touch);
+    oSwiper.addEventListener("touchend", touch);
+
+    let x1, startX;
+
+    function touch(ev) {
+        switch (ev.type) {
+            case "touchstart":
+                oSwiperUl.style.transition = "";
+                x1 = ev.changedTouches[0].clientX;
+                startX = cssTransform(touch, "translateX");
+                break;
+            case "touchmove":
+                let x2 = ev.changedTouches[0].clientX;
+                let nowX = startX + x2 - x1;
+                cssTransform(touch, "translateX", nowX);
+                break;
+            case "touchend":
+                let transformStorage = cssTransform(touch, "translateX");
+                transformStorage = Math.min(0, transformStorage);
+                transformStorage = Math.max(transformStorage, -(liLength - 1) * liWidth);
+                let quantity = Math.round(transformStorage / liWidth);
+                cssTransform(touch, "translateX", quantity * liWidth);
+                oSwiperUl.style.transition = "0.3s";
+                oBg.style.backgroundImage = `url(${imgSrcs[-quantity]})`;
+                break;
+        }
+    }
+
+    function cssTransform(ele, attr, value) {
+        if (!ele.transform) {
+            ele.transform = {};
+        }
+        let str = "";
+        switch (arguments.length) {
+            case 2:
+                return ele.transform[attr] || 0;
+            case 3:
+                ele.transform[attr] = value;
+                str += `${attr}(${ele.transform[attr]}px)`;
+                break;
+        }
+        oSwiperUl.style.transform = str;
+    }
+</script>
+</body>
+</html>

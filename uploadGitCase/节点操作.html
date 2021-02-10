@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>节点操作</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        li {
+            list-style: none;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        html {
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgb(137, 189, 224), rgb(255, 174, 135));
+        }
+
+        .clearfix::after {
+            content: "";
+            display: block;
+            clear: both;
+        }
+
+        .content {
+            width: 800px;
+            height: 530px;
+            margin: 100px auto;
+        }
+
+        .content > div {
+            float: left;
+            width: 50%;
+            height: 100%;
+        }
+
+        .content > .con-left {
+            background-color: aliceblue;
+        }
+
+        .content > .con-right {
+            box-sizing: border-box;
+            padding: 60px 20px 0;
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+
+        .content > .con-left > h4 {
+            box-sizing: border-box;
+            padding: 55px 20px 0;
+            line-height: 1.5em;
+        }
+
+        .content > .con-left > h4 > * {
+            float: left;
+        }
+
+        .content > .con-left > h4 > p {
+            margin-left: 10px;
+            color: rgb(255, 174, 135);
+        }
+
+        .content > .con-left > h4 > ul > li {
+            float: left;
+            margin-left: 0.6em;
+        }
+
+        .content > .con-left > h4 > ul > li > a {
+            color: #000;
+        }
+
+        .content > .con-left > h4 > ul > li > a:hover {
+            color: red;
+        }
+
+        .content > .con-left > .select-addr {
+            box-sizing: border-box;
+            padding: 15px 20px 0;
+        }
+
+        .content > .con-left > .select-addr > span {
+            display: inline-block;
+            padding: 5px;
+            margin-right: 7px;
+            margin-bottom: 7px;
+            border: 1px solid dimgray;
+            color: dimgray;
+        }
+
+        .content > .con-left > .select-addr > span > a {
+            border-left: 1px solid dimgray;
+            padding-left: 5px;
+            font-style: italic;
+            color: dimgray;
+        }
+
+        .content > .con-left > .select-addr > span > a:hover {
+            color: red;
+        }
+
+        .content > .con-right > span {
+            display: inline-block;
+            padding: 5px;
+            margin-right: 7px;
+            margin-bottom: 7px;
+            border: 1px solid #ccc;
+            color: aliceblue;
+        }
+    </style>
+</head>
+<body>
+<div class="content">
+    <div class="con-left">
+        <h4 class="clearfix">
+            <p>热门目的地：</p>
+            <ul>
+                <li class="local-list"><a href="javascript:;">叙利亚</a></li>
+                <li class="local-list"><a href="javascript:;">阿富汗</a></li>
+                <li class="local-list"><a href="javascript:;">也门</a></li>
+                <li class="local-list"><a href="javascript:;">埃及</a></li>
+                <li class="local-list"><a href="javascript:;">南非</a></li>
+            </ul>
+        </h4>
+        <div class="select-addr"></div>
+    </div>
+    <div class="con-right"></div>
+</div>
+
+<script>
+    let oConLeft = document.querySelector(".content > .con-left");
+    let oConRight = document.querySelector(".content > .con-right");
+    let oSelectAddr = oConLeft.querySelector(".select-addr");
+
+    oConLeft.querySelectorAll("li").forEach(item => item.dataset.toggle = false);
+
+    oConLeft.addEventListener("click", (ev = window.event) => {
+        let ele = ev.target.parentNode;
+        switch (ele.tagName) {
+            case "LI":
+                if (ele.dataset.toggle === "false") {
+                    ele.dataset.toggle = true;
+
+                    let str = ele.innerText;
+
+                    let eleChild1 = document.createElement("span");
+                    eleChild1.classList.add("select-list");
+                    eleChild1.append(str);
+
+                    let eleChild2 = eleChild1.cloneNode(true);
+                    oConRight.appendChild(eleChild2);
+
+                    removeEle(eleChild1, eleChild2, ele);
+
+                    let eleA = document.createElement("a");
+                    eleA.setAttribute("href", "javascript:;");
+                    eleA.append("x");
+                    eleChild1.appendChild(eleA);
+                    oSelectAddr.appendChild(eleChild1);
+                }
+                break;
+            case "SPAN":
+                ele.remove();
+                break;
+        }
+    });
+
+    function removeEle(ele1, ele2, eleF) {
+        ele1.addEventListener("DOMNodeRemoved", (ev = window.event) => {
+            ele2.remove();
+            eleF.dataset.toggle = false;
+        });
+    }
+</script>
+</body>
+</html>

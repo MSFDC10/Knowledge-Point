@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>监听transition事件兼容</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .move {
+            width: 100px;
+            height: 100px;
+            background-color: #aa1b1b;
+            margin: 100px auto;
+            transition: height 1s;
+        }
+
+        .move:hover {
+            height: 500px;
+        }
+    </style>
+</head>
+<body>
+<div class="move"></div>
+
+<script>
+    const oDiv = document.querySelector(".move");
+
+    // 兼容
+    function whichTransitionEvent() {
+        let key,
+            ele = document.createElement("div"),
+            transitionEvent = {
+                "transition": "transitionend",
+                "OTransition": "oTransitionEnd",
+                "MozTransition": "transitionend",
+                "WebkitTransition": "webkitTransitionEnd"
+            };
+
+        for (key in transitionEvent) {
+            if (ele.style[key] !== undefined) {
+                return transitionEvent[key];
+            }
+        }
+    }
+
+    oDiv.addEventListener(whichTransitionEvent(), ev => {
+        oDiv.style.backgroundColor = `green`;
+    });
+</script>
+</body>
+</html>

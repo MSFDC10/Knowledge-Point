@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>排序算法</title>
+    <style>
+        :root {
+            --height: 40px;
+            --border: 1px solid #e8e8e8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        li {
+            list-style: none;
+        }
+
+        .container {
+            box-sizing: border-box;
+            width: 790px;
+            height: var(--height);
+            margin: 30px auto;
+        }
+
+        .container > .nav {
+            height: var(--height);
+            border: var(--border);
+        }
+
+        .container > .nav > li {
+            box-sizing: border-box;
+            float: left;
+            width: 85px;
+            height: 100%;
+            line-height: var(--height);
+            text-align: center;
+        }
+
+        .container > .nav > li::hover {
+            border-left: var(--border);
+            border-right: var(--border);
+        }
+
+        .container > .content {
+            height: 620px;
+            margin-top: 20px;
+        }
+
+        .container > .content > .listmsg {
+            box-sizing: border-box;
+            float: left;
+            width: 180px;
+            height: 300px;
+            margin-left: 12px;
+            margin-bottom: 12px;
+            border: var(--border);
+        }
+
+        .container > .content > .listmsg > img {
+            width: 180px;
+            height: 200px;
+        }
+
+        .container > .content > .listmsg > .msgcon {
+            padding-top: 10px 20px 0;
+        }
+
+        .container > .content > .listmsg > .msgcon > .pricemsg {
+            height: 22px;
+            line-height: 22px;
+        }
+
+        .container > .content > .listmsg > .msgcon > .pricemsg > .price {
+            float: left;
+            padding-left: 10px;
+            font-size: 16px;
+        }
+
+        .container > .content > .listmsg > .msgcon > .pricemsg > .price::before {
+            content: "￥";
+            display: inline;
+            color: red;
+        }
+
+        .container > .content > .listmsg > .msgcon > .pricemsg > .buyer {
+            float: right;
+            padding-right: 10px;
+            font-size: 12px;
+            color: #ccc;
+        }
+
+        .container > .content > .listmsg > .msgcon > .pricemsg > .buyer::after {
+            content: "人付款";
+            display: inline;
+        }
+
+        .container > .content > .listmsg > .msgcon > h3 {
+            padding: 0 10px 0;
+            margin: 5px 0;
+            font-size: 13px;
+        }
+
+        .container > .content > .listmsg > .msgcon > h3::before {
+            content: "包邮";
+            display: inline;
+            margin-right: 10px;
+            background-color: red;
+            color: #ccc;
+        }
+
+        .container > .content > .listmsg > .msgcon > .shopmsg {
+            height: 25px;
+            padding: 0 10px;
+            line-height: 25px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .container > .content > .listmsg > .msgcon > .shopmsg > .shopname {
+            float: left;
+        }
+
+        .container > .content > .listmsg > .msgcon > .shopmsg > .shoplcation {
+            float: right;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <ul class="nav">
+        <li class="price-ascending">价格升序</li>
+        <li class="price-descending">价格降序</li>
+        <li class="price-random">价格随机</li>
+    </ul>
+    <ul class="content">
+        <li class="listmsg">
+            <img src="https://wx4.sinaimg.cn/mw690/6ef27b20gy1gn3ib9afp6j21bs2bckgw.jpg">
+            <div class="msgcon">
+                <div class="pricemsg">
+                    <span class="price">38</span>
+                    <span class="buyer">9527</span>
+                </div>
+                <h3>李宁足球五号四号三号正品儿童成人训练比赛</h3>
+                <div class="shopmsg">
+                    <span class="shopname">SHZ的小店</span>
+                    <span class="shoplcation">辽阳</span>
+                </div>
+            </div>
+        </li>
+        <li class="listmsg">
+            <img src="https://wx2.sinaimg.cn/mw690/6ef27b20gy1gn3ibacfydj219n27k7ud.jpg">
+            <div class="msgcon">
+                <div class="pricemsg">
+                    <span class="price">18</span>
+                    <span class="buyer">9527</span>
+                </div>
+                <h3>李宁足球五号四号三号正品儿童成人训练比赛</h3>
+                <div class="shopmsg">
+                    <span class="shopname">SHZ的小店</span>
+                    <span class="shoplcation">辽阳</span>
+                </div>
+            </div>
+        </li>
+        <li class="listmsg">
+            <img src="https://wx1.sinaimg.cn/mw690/6ef27b20gy1gn3t3tsatlj20v40v5tj4.jpg">
+            <div class="msgcon">
+                <div class="pricemsg">
+                    <span class="price">108</span>
+                    <span class="buyer">9527</span>
+                </div>
+                <h3>李宁足球五号四号三号正品儿童成人训练比赛</h3>
+                <div class="shopmsg">
+                    <span class="shopname">SHZ的小店</span>
+                    <span class="shoplcation">辽阳</span>
+                </div>
+            </div>
+        </li>
+        <li class="listmsg">
+            <img src="https://wx3.sinaimg.cn/mw690/6ef27b20gy1gn3ibbd6ocj214q1ywe15.jpg">
+            <div class="msgcon">
+                <div class="pricemsg">
+                    <span class="price">55</span>
+                    <span class="buyer">9527</span>
+                </div>
+                <h3>李宁足球五号四号三号正品儿童成人训练比赛</h3>
+                <div class="shopmsg">
+                    <span class="shopname">SHZ的小店</span>
+                    <span class="shoplcation">辽阳</span>
+                </div>
+            </div>
+        </li>
+        <li class="listmsg">
+            <img src="https://wx2.sinaimg.cn/mw690/6ef27b20gy1gkkfshim1sj21bp1zk4hg.jpg">
+            <div class="msgcon">
+                <div class="pricemsg">
+                    <span class="price">3</span>
+                    <span class="buyer">9527</span>
+                </div>
+                <h3>李宁足球五号四号三号正品儿童成人训练比赛</h3>
+                <div class="shopmsg">
+                    <span class="shopname">SHZ的小店</span>
+                    <span class="shoplcation">辽阳</span>
+                </div>
+            </div>
+        </li>
+        <li class="listmsg">
+            <img src="https://wx3.sinaimg.cn/mw690/6ef27b20gy1gkkfsj7uc5j21bp1zkwwn.jpg">
+            <div class="msgcon">
+                <div class="pricemsg">
+                    <span class="price">1</span>
+                    <span class="buyer">9527</span>
+                </div>
+                <h3>李宁足球五号四号三号正品儿童成人训练比赛</h3>
+                <div class="shopmsg">
+                    <span class="shopname">SHZ的小店</span>
+                    <span class="shoplcation">辽阳</span>
+                </div>
+            </div>
+        </li>
+        <li class="listmsg">
+            <img src="https://wx3.sinaimg.cn/mw690/6ef27b20gy1gkkfskj71bj218s1v714t.jpg">
+            <div class="msgcon">
+                <div class="pricemsg">
+                    <span class="price">999</span>
+                    <span class="buyer">9527</span>
+                </div>
+                <h3>李宁足球五号四号三号正品儿童成人训练比赛</h3>
+                <div class="shopmsg">
+                    <span class="shopname">SHZ的小店</span>
+                    <span class="shoplcation">辽阳</span>
+                </div>
+            </div>
+        </li>
+        <li class="listmsg">
+            <img src="https://wx1.sinaimg.cn/mw690/6ef27b20gy1gkkfuj3g1hj20v91vowvy.jpg">
+            <div class="msgcon">
+                <div class="pricemsg">
+                    <span class="price">225</span>
+                    <span class="buyer">9527</span>
+                </div>
+                <h3>李宁足球五号四号三号正品儿童成人训练比赛</h3>
+                <div class="shopmsg">
+                    <span class="shopname">SHZ的小店</span>
+                    <span class="shoplcation">辽阳</span>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
+
+<script>
+    let oContent = document.querySelector(".container > .content"),
+        aListMsg = oContent.querySelectorAll("li"),
+        navBtn = document.querySelector(".container > .nav");
+
+    let aItem = [...aListMsg];
+
+    aListMsg.forEach(item => item.price = item.querySelector(".msgcon > .pricemsg > .price").innerText - 0);
+
+    navBtn.addEventListener("click", (ev = window.event) => {
+        let cName = ev.target.className;
+        switch (cName) {
+            case "price-ascending":
+                // 1.sort
+                // aItem.sort((x, y) => {
+                //     if (x.price < y.price) {
+                //         return -1;
+                //     }
+                // });
+                // 2.冒泡排序
+                // bubbleSort(aItem, "price", cName);
+                // 3.快速排序
+                aItem = quickSort(aItem, "price", cName);
+                break;
+            case "price-descending":
+                // 1.sort
+                // aItem.sort((x, y) => {
+                //     if (x.price > y.price) {
+                //         return -1;
+                //     }
+                // });
+                // 2.冒泡排序
+                // bubbleSort(aItem, "price", cName);
+                // 3.快速排序
+                aItem = quickSort(aItem, "price", cName);
+                break;
+            case "price-random":
+                break;
+        }
+        oContent.innerHTML = "";
+        aItem.forEach(item => oContent.appendChild(item));
+    });
+
+    // 冒泡排序
+    function bubbleSort(obj, str, cName) {
+        for (let i = 0; i < obj.length; i++) {
+            for (let j = i + 1; j < obj.length; j++) {
+                switch (cName) {
+                    case "price-ascending":
+                        if (obj[i][str] > obj[j][str]) {
+                            [obj[i], obj[j]] = [obj[j], obj[i]];
+                        }
+                        break;
+                    case "price-descending":
+                        if (obj[i][str] < obj[j][str]) {
+                            [obj[i], obj[j]] = [obj[j], obj[i]];
+                        }
+                        break;
+                }
+            }
+        }
+    }
+
+    // 快速排序
+    function quickSort(obj, str, cName) {
+        if (obj.length <= 1) {
+            return obj;
+        }
+        let pivotIndex = Math.floor(obj.length / 2); // 取中间值的位置
+
+        let pivotValue = obj.splice(pivotIndex, 1)[0]; // 截取中间位置的值，原数组内j就少了这个值
+
+        let leftArr = [];
+        let rightArr = [];
+
+        for (let i = 0; i < obj.length; i++) {
+            if (cName === "price-ascending") {
+                if (obj[i][str] < pivotValue[str]) {
+                    leftArr.push(obj[i]);
+                } else {
+                    rightArr.push(obj[i]);
+                }
+            } else {
+                if (obj[i][str] > pivotValue[str]) {
+                    leftArr.push(obj[i]);
+                } else {
+                    rightArr.push(obj[i]);
+                }
+            }
+        }
+
+        return quickSort(leftArr, str, cName).concat([pivotValue], quickSort(rightArr, str, cName));
+    }
+</script>
+</body>
+</html>

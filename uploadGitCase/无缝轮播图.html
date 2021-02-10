@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>无缝轮播图</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        li {
+            list-style: none;
+        }
+
+        .banner {
+            position: relative;
+            width: 780px;
+            height: 380px;
+            margin: 100px auto;
+        }
+
+        .banner > .swiper {
+            overflow: hidden;
+            width: 100%;
+            height: 330px;
+        }
+
+        .banner > .swiper > ul {
+            width: 500%;
+            height: 100%;
+            transform: translateX(-780px);
+            transition: transform 0.3s;
+        }
+
+        .banner > .swiper > ul.on {
+            transition: transform 0s;
+        }
+
+        .banner > .swiper > ul > li {
+            float: left;
+            width: 780px;
+            height: 100%;
+        }
+
+        .banner > .swiper > ul > li > img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .banner > .tab {
+            width: 100%;
+            height: 50px;
+        }
+
+        .banner > .tab > ul {
+            width: 100%;
+            height: 100%;
+        }
+
+        .banner > .tab > ul > li {
+            float: left;
+            width: 20%;
+            height: 100%;
+            background-color: #7b7a78;
+            color: antiquewhite;
+            text-align: center;
+            line-height: 50px;
+            cursor: pointer;
+        }
+
+        .banner > .tab > ul > li.active {
+            background-color: #443e39;
+            color: #09e8d5;
+        }
+
+        .banner > .btn > div {
+            position: absolute;
+            top: 50%;
+            width: 40px;
+            height: 60px;
+            transform: translateY(-50%);
+            background-color: #7b7a78;
+            color: antiquewhite;
+            font-size: 30px;
+            text-align: center;
+            line-height: 60px;
+            cursor: pointer;
+        }
+
+        .banner > .btn > div.leftBtn {
+            left: 0;
+        }
+
+        .banner > .btn > div.rightBtn {
+            right: 0;
+        }
+    </style>
+</head>
+<body>
+<div class="banner">
+    <div class="swiper">
+        <ul>
+            <li><img
+                    src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1983404653,2780715502&fm=26&gp=0.jpg">
+            </li>
+            <li><img
+                    src="https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1375858993,2927105687&fm=26&gp=0.jpg">
+            </li>
+            <li><img
+                    src="https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=197899459,1363608520&fm=26&gp=0.jpg">
+            </li>
+            <li><img
+                    src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=2174010458,3304360209&fm=26&gp=0.jpg">
+            </li>
+            <li><img
+                    src="https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3821212156,374564268&fm=26&gp=0.jpg">
+            </li>
+        </ul>
+    </div>
+    <div class="tab">
+        <ul>
+            <li class="active">IU1</li>
+            <li>IU2</li>
+            <li>IU3</li>
+            <li>IU4</li>
+            <li>IU5</li>
+        </ul>
+    </div>
+    <div class="btn">
+        <div class="leftBtn"><</div>
+        <div class="rightBtn">></div>
+    </div>
+</div>
+
+<script>
+    /*
+    * 逻辑步骤：
+    *   1：图片首尾相接
+    *       1.1：获取ul元素和li元素
+    *       1.2：克隆li元素，改变位置，首尾相接
+    *       1.3：改变ul元素宽度
+    *   2：实现左右按钮功能
+    *       2.1：获取button元素
+    *   3：实现无缝轮播
+    *       3.1：当 lastIndex < 0 时，图片显示在下标为-1（第一张图）的图片，当切换这张图片动画效果完成时，
+    *           删除动画，并切换图片
+    *   4：给下方按钮添加点击事件
+    * */
+
+    const oSwiperUl = document.querySelector(".banner > .swiper > ul"),
+        aSwiperLi = oSwiperUl.querySelectorAll("li"),
+        aBtn = document.querySelectorAll(".banner > .btn > div"),
+        aTab = document.querySelectorAll(".banner > .tab > ul > li");
+
+    const liWidth = aSwiperLi[0].offsetWidth;
+
+    function setDomNode(eleFather, eleSon) {
+        eleFather.appendChild(eleSon[0].cloneNode(true));
+        eleFather.insertBefore(eleSon[aSwiperLi.length - 1].cloneNode(true), eleSon[0]);
+
+        oSwiperUl.style.width = oSwiperUl.querySelectorAll("li").length + "00%";
+
+    }
+
+    setDomNode(oSwiperUl, aSwiperLi);
+    let lastIndex = 0;
+
+    function turnPage(index) {
+        oSwiperUl.classList.remove("on");
+        oSwiperUl.style.transform = `translateX(${-(index + 1) * liWidth}px)`;
+
+        if (index < 0) {
+            oSwiperUl.addEventListener("transitionend", function (ev) {
+                ev.target.classList.add("on");
+                ev.target.style.transform = `translateX(${-aSwiperLi.length * liWidth}px)`;
+                ev.target.removeEventListener("transitionend", arguments.callee);
+            });
+            index = aSwiperLi.length - 1;
+        } else if (index >= aSwiperLi.length) {
+            oSwiperUl.addEventListener("transitionend", function (ev) {
+                ev.target.classList.add("on");
+                ev.target.style.transform = `translateX(${-liWidth}px)`;
+                ev.target.removeEventListener("transitionend", arguments.callee);
+            });
+            index = 0;
+        }
+
+        aTab[lastIndex].classList.remove("active");
+        aTab[index].classList.add("active");
+
+        lastIndex = index;
+    }
+
+    aBtn.forEach((item, index) => {
+        item.onclick = () => {
+            turnPage(index ? lastIndex + 1 : lastIndex - 1);
+        }
+    });
+
+    aTab.forEach((item, idx) => {
+        item.onclick = () => turnPage(idx);
+    });
+</script>
+</body>
+</html>
