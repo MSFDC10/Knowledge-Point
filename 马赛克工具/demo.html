@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .content {
+            width: 500px;
+            height: 550px;
+            margin: 100px auto;
+            /* background-color: aqua; */
+            border: 1px solid #ccc;
+        }
+
+        .img {
+            width: 100%;
+            height: 500px;
+            border-bottom: 1px dashed #ccc;
+        }
+
+        .controlBox {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            height: 50px;
+        }
+
+        .upload {
+            width: 50px;
+            height: 50px;
+            background-image: url("images/upload.png");
+            background-size: cover;
+        }
+
+        .upload input {
+            display: block;
+            width: 50px;
+            height: 50px;
+            opacity: 0;
+        }
+
+        .download {
+            width: 50px;
+            height: 50px;
+            background: url("images/download.png");
+            background-size: cover;
+        }
+    </style>
+</head>
+
+<body>
+<div class="content">
+    <div class="img">
+        <canvas id="drawBox" width="500" height="500"></canvas>
+    </div>
+    <div class="controlBox">
+        <div class="upload">
+            <input type="file" id="selectPic">
+        </div>
+        <div class="download"></div>
+    </div>
+</div>
+<script>
+    var selectPic = document.getElementById("selectPic");
+    var downB = document.querySelector(".download");
+    var Con = document.querySelector(".content");
+    var canvas = document.getElementById("drawBox");
+    var canCon = canvas.getContext("2d");
+    var step = 10;//马赛克的大小
+    selectPic.onchange = function () {
+        canCon.clearRect(0, 0, 500, 500);
+        var url = window.URL.createObjectURL(this.files[0]);//console.log(this.files);//得到上传到的文件
+        var img = new Image();//生成新的图片
+        img.src = url;//设置图片地址
+        img.onload = function () {
+            var w = img.naturalWidth;
+            var h = img.naturalHeight;
+            var w1 = w / (h / 500);
+            var startX = (500 - w1) / 2;
+            canCon.drawImage(img, startX, 0, w1, 500);
+        };
+    };
+    downB.onclick = function () {
+        document.location.href = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+        //location = img;
+    }
+    canvas.addEventListener("mousedown", mosaic);
+    canvas.addEventListener("mousemove", mosaic);
+    document.addEventListener("mouseup", mosaic);
+    var toggle = false;
+
+    function mosaic(ev = window.event) {
+        switch (ev.type) {
+            case "mousedown":
+                toggle = true;
+                setMosaic(ev.clientX, ev.clientY);
+                break;
+            case "mousemove":
+                if (toggle) {
+                    setMosaic(ev.clientX, ev.clientY);
+                }
+                break;
+            case "mouseup":
+                toggle = false;
+                break;
+        }
+    }
+
+    function setMosaic(x, y) {
+        // var pX=parseInt((x - canvas.offsetLeft) / 10) * 10;
+        // var pY=parseInt((y - canvas.offsetLeft) / 10) * 10;
+        var pX = x - canvas.offsetLeft;
+        var pY = y - canvas.offsetTop;
+        console.log("pX:" + pX, "pY:" + pY, "step:" + step);
+
+        //获取颜色
+        //console.log((pX - (step / 2)), (pY - (step / 2)), (pX + (step / 2)), (pY + (step / 2)));
+        //获取指定步长区域内的每个点的颜色值
+        var arrlist = restore(canCon.getImageData((pX - (step / 2)), (pY - (step / 2)), step, step).data, 4);
+        // console.log(arrlist);
+        var vr = 0,
+            vg = 0,
+            vb = 0;
+        var al = arrlist.length;
+        for (var i = 0; i < al; i++) {
+            vr += arrlist[i][0];
+            vg += arrlist[i][1];
+            vb += arrlist[i][2];
+        }
+        canCon.fillStyle = "rgb(" + Math.round(vr / al) + "," + Math.round(vg / al) + "," + Math.round(vb / al) + ")";
+
+        canCon.fillRect((pX - step / 2), (pY - step / 2), step, step);
+    }
+
+    function restore(arr, stepSize) {//升维,将一维数组转为2维数组
+        //升维
+        // console.log(arr);
+        var arrList = [],
+            index = 0,
+            number = parseInt(arr.length / stepSize);
+        for (var i = 0; i < number; i++) {
+            arrList.push(arr.slice(index, stepSize + index));
+            index += stepSize;
+        }
+        return arrList;
+        //console.log(arrList);
+    }
+</script>
+</body>
+
+</html>
